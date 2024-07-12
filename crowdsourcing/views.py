@@ -1,40 +1,66 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+import firebase_admin
+from firebase_admin import auth, credentials
+from .firebase_config import *
+
+def signup_view(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+
+        # Validate email
+        try:
+            validate_email(email)
+        except ValidationError:
+            return render(request, 'signup.html', {'error': 'Invalid email format'})
+
+        # Check password length
+        if len(password) < 6:
+            return render(request, 'signup.html', {'error': 'Password must be at least 6 characters long'})
+
+        # Check password confirmation
+        if password != confirm_password:
+            return render(request, 'signup.html', {'error': 'Passwords do not match'})
+
+        try:
+            user_record = auth.create_user(email=email, password=password)
+            # Account created successfully
+            messages.success(request, 'Account created successfully. Please log in.')
+            return redirect('login')
+        except firebase_admin.exceptions.FirebaseError as e:
+            return render(request, 'signup.html', {'error': str(e)})
+
+    return render(request, 'signup.html')
 
 def login_view(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
+        try:
+            user_record = auth.get_user_by_email(email)
+            # Here you'd verify the password if you were managing it, which Firebase does for you
+            request.session['user_id'] = user_record.uid  # Use Firebase UID for session
             return redirect('hello')
-        else:
-            # Return an 'invalid login' error message.
+        except firebase_admin.exceptions.FirebaseError:
             return render(request, 'login.html', {'error': 'Invalid email or password.'})
+
     return render(request, 'login.html')
 
-def signup_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            if user is not None:
-                login(request, user)
-                return redirect('hello')
-    else:
-        form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+# Custom login_required decorator
+def login_required(func):
+    def wrapper(request, *args, **kwargs):
+        if 'user_id' not in request.session:
+            return redirect('login')
+        return func(request, *args, **kwargs)
+    return wrapper
 
 @login_required
 def hello_view(request):
     return render(request, 'hello.html')
 
-# Add this view for the root URL
 def index_view(request):
     return redirect('login')
