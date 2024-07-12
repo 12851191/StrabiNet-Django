@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from crowdsourcing import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index_view, name='index'),  # Add this line for the root URL
+    path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),  # Add this line for the signup URL
+    path('hello/', views.hello_view, name='hello'),
 ]
