@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -67,7 +66,7 @@
     <div id="particles-js"></div>
     <div class="login-container">
         <h2 class="text-center">Signup</h2>
-        <form method="post">
+        <form id="signupForm" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -86,13 +85,14 @@
                     {{ error }}
                 </div>
             {% endif %}
+            <div id="error-message" class="alert alert-danger" role="alert" style="display:none;"></div>
             <button type="submit" class="btn btn-primary btn-block">Signup</button>
         </form>
         <div class="signup-text">
             Already have an account? <a href="{% url 'login' %}">Login here</a>
         </div>
+        <button onclick="window.history.back();" class="btn btn-secondary btn-block mt-3">Go Back</button>
     </div>
-    <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
@@ -146,7 +146,7 @@
                 },
                 "move": {
                     "enable": true,
-                    "speed": 2,  // Manage particles speed here
+                    "speed": 2,
                     "direction": "none",
                     "random": false,
                     "straight": false,
@@ -201,9 +201,58 @@
             "retina_detect": true
         });
     </script>
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1XZR5gLnES1KfLPhPoQWXeGNoZhg5--k",
+            authDomain: "strabinet-backend.firebaseapp.com",
+            projectId: "strabinet-backend",
+            storageBucket: "strabinet-backend.appspot.com",
+            messagingSenderId: "10376651985",
+            appId: "1:10376651985:web:1de99518e47459e72c91f0",
+            measurementId: "G-3VZRFC7VW0"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var email = event.target.email.value;
+            var password = event.target.password.value;
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    userCredential.user.sendEmailVerification()
+                        .then(() => {
+                            alert('Verification email sent. Please check your inbox.');
+                            fetch("{% url 'signup' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                },
+                                body: JSON.stringify({ email: email, password: password, confirm_password: password })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    window.location.href = "{% url 'login' %}";
+                                } else {
+                                    document.getElementById('error-message').innerText = data.message;
+                                    document.getElementById('error-message').style.display = 'block';
+                                }
+                            });
+                        });
+                })
+                .catch((error) => {
+                    document.getElementById('error-message').innerText = error.message;
+                    document.getElementById('error-message').style.display = 'block';
+                });
+        });
+    </script>
 </body>
 </html>

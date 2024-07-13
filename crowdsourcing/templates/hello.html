@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello</title>
+    <title>Hello Page</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -24,7 +24,7 @@
             height: 100%;
             z-index: -1;
         }
-        .hello-container {
+        .main-container {
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
             padding: 2rem;
@@ -33,19 +33,15 @@
             color: #fff;
             width: 80%;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
+            align-items: center;
         }
-        .hello-container h2 {
+        .main-container h2 {
             color: #fff;
-        }
-        .half {
-            width: 45%;
-            text-align: center;
         }
         .btn-primary {
             background-color: #007bff;
             border: none;
-            margin-top: 1rem;
         }
         .btn-primary:hover {
             background-color: #0056b3;
@@ -54,14 +50,14 @@
 </head>
 <body>
     <div id="particles-js"></div>
-    <div class="hello-container">
-        <div class="half">
-            <h2>Database Access</h2>
-            <button class="btn btn-primary">Access</button>
+    <div class="main-container">
+        <div>
+            <h2 class="text-center">Database Access</h2>
+            <a href="{% url 'download_dataset' %}" class="btn btn-primary btn-block">Download Dataset</a>
         </div>
-        <div class="half">
-            <h2>Contribute</h2>
-            <button class="btn btn-primary">Contribute</button>
+        <div>
+            <h2 class="text-center">Contribute</h2>
+            <a href="{% url 'contribute' %}" class="btn btn-primary btn-block">Contribute</a>
         </div>
     </div>
     <!-- Particles.js -->

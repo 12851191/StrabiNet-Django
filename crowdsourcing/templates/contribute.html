@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Bootstrap CSS -->
+    <title>Contribute</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -24,24 +23,12 @@
             height: 100%;
             z-index: -1;
         }
-        .login-container {
+        .container {
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            color: #fff;
-        }
-        .login-container h2 {
-            color: #fff;
-        }
-        .form-control {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-        .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
         .btn-primary {
@@ -51,87 +38,37 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
-        .signup-text {
-            margin-top: 1rem;
-            text-align: center;
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
         }
-        .signup-text a {
-            color: #007bff;
-        }
-        .signup-text a:hover {
-            color: #0056b3;
+        .btn-secondary:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
     <div id="particles-js"></div>
-    <div class="login-container">
-        <h2 class="text-center">Login</h2>
-        <form id="loginForm" method="post">
+    <div class="container">
+        <h2 class="text-center">Contribute</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload' %}">
             {% csrf_token %}
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" class="form-control" required>
+                <label for="face_image">Upload Face Image:</label>
+                <input type="file" name="face_image" class="form-control-file" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" class="form-control" required>
+                <label for="left_eye_image">Upload Left Eye Image:</label>
+                <input type="file" name="left_eye_image" class="form-control-file" required>
             </div>
-            <div id="error-message"></div>
-            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            <div class="form-group">
+                <label for="right_eye_image">Upload Right Eye Image:</label>
+                <input type="file" name="right_eye_image" class="form-control-file" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
         </form>
-        <div class="signup-text">
-            Don't have an account? <a href="{% url 'signup' %}">Create one here</a>
-        </div>
+        <button onclick="window.history.back();" class="btn btn-secondary btn-block mt-3">Go Back</button>
     </div>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyA1XZR5gLnES1KfLPhPoQWXeGNoZhg5--k",
-            authDomain: "strabinet-backend.firebaseapp.com",
-            projectId: "strabinet-backend",
-            storageBucket: "strabinet-backend.appspot.com",
-            messagingSenderId: "10376651985",
-            appId: "1:10376651985:web:1de99518e47459e72c91f0",
-            measurementId: "G-3VZRFC7VW0"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            var email = event.target.email.value;
-            var password = event.target.password.value;
-
-            firebase.auth().signInWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                userCredential.user.getIdToken().then((idToken) => {
-                  fetch("{% url 'login' %}", {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ idToken: idToken })
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.status === 'success') {
-                      window.location.href = "{% url 'hello' %}";
-                    } else {
-                      document.getElementById('error-message').innerText = data.message;
-                    }
-                  });
-                });
-              })
-              .catch((error) => {
-                document.getElementById('error-message').innerText = "Invalid email or password.";
-              });
-        });
-    </script>
-    <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
@@ -185,7 +122,7 @@
                 },
                 "move": {
                     "enable": true,
-                    "speed": 2,  // Manage particles speed here
+                    "speed": 2,
                     "direction": "none",
                     "random": false,
                     "straight": false,
@@ -240,7 +177,6 @@
             "retina_detect": true
         });
     </script>
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
