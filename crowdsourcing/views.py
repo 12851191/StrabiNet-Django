@@ -20,6 +20,7 @@ from .firebase_config import *
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 def send_verification_email(email, link):
     subject = 'Verify your email address'
@@ -153,4 +154,8 @@ def download_dataset(request):
             response = HttpResponse(zip_file.read(), content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename="dataset.zip"'
             return response
-
+        
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
