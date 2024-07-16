@@ -63,7 +63,7 @@ def login_view(request):
         id_token = body.get('idToken')
 
         try:
-            decoded_token = auth.verify_id_token(id_token)
+            decoded_token = auth.verify_id_token(id_token, clock_skew_seconds=15)
             user = auth.get_user(decoded_token['uid'])
             if not user.email_verified:
                 return JsonResponse({'status': 'error', 'message': 'Email not verified.'})
@@ -157,5 +157,8 @@ def download_dataset(request):
         
 @login_required
 def logout_view(request):
-    logout(request)
-    return redirect('login')
+    try:
+        del request.session['uid']
+    except:
+        pass
+    return render(request,"login.html")
