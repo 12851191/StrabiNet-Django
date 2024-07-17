@@ -6,12 +6,14 @@
     <title>Hello Page</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100vh;
+            height: 95vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,9 +37,10 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
+            text-align: center;
         }
-        .main-container h2 {
-            color: #fff;
+        .main-container h1 {
+            font-size: 70px;
         }
         .btn-primary {
             background-color: #007bff;
@@ -79,10 +82,10 @@
     <div class="main-container vstack gap-3">
         <div class="h-1000 align-items-center justify-content-center">
             <span>
-                <h1 style="font-size: 70px">Crowdsourcing Strabismus</h1>
+                <h1 class="bg-gradient-to-r from-blue-500 to-white bg-clip-text text-5xl font-extrabold text-transparent md:text-5xl">Crowdsourcing Strabismus</h1>
             </span>
             <span class="d-flex justify-content-center">
-                <h1 style="font-size: 70px">One Image at a Time</h1>
+                <h1 class="bg-gradient-to-r from-blue-500 to-white bg-clip-text text-5xl font-extrabold text-transparent md:text-5xl">One Image at a Time</h1>
             </span>
         </div>
     <!-- Particles.js -->
@@ -91,7 +94,7 @@
         particlesJS('particles-js', {
             "particles": {
                 "number": {
-                    "value": 80,
+                    "value": 150,
                     "density": {
                         "enable": true,
                         "value_area": 800
